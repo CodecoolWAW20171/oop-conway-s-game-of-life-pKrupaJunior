@@ -12,15 +12,15 @@ import java.util.Queue;
 public class SimpleUniverse implements Universe {
 
     private static final String NAME = "Simple Universe";
-    private int rows;
-    private int columns;
+    private final int rows;
+    private final int columns;
     private Cell[][] universe;
     private Queue<Point> cellsChanged;
 
     private LongProperty generation;
     private LongProperty population;
 
-    private boolean wrapping;
+    private final boolean wrapping;
 
     public SimpleUniverse(int rows, int columns, boolean wrapping) {
         this.rows = rows;
@@ -36,7 +36,7 @@ public class SimpleUniverse implements Universe {
     private void initializeCells() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                this.universe[i][j] = new Cell();
+                universe[i][j] = new Cell();
             }
         }
     }
@@ -53,22 +53,22 @@ public class SimpleUniverse implements Universe {
         for (Neighbour neighbour : Neighbour.values()) {
             int xN = x + neighbour.getDx();
             int yN = y + neighbour.getDy();
-            if (this.wrapping) {
-                xN = xN >= 0 ? xN % this.rows : this.rows - 1;
-                yN = yN >= 0 ? yN % this.columns : this.columns - 1;
+            if (wrapping) {
+                xN = xN >= 0 ? xN % rows : rows - 1;
+                yN = yN >= 0 ? yN % columns : columns - 1;
             } else {
-                if ((xN < 0) || (xN > this.rows - 1) ||
-                        (yN < 0) || (yN > this.columns - 1)) {
+                if ((xN < 0) || (xN > rows - 1) ||
+                        (yN < 0) || (yN > columns - 1)) {
                     continue;
                 }
             }
-            this.universe[x][y].addNeighbourCell(this.universe[xN][yN]);
+            universe[x][y].addNeighbourCell(universe[xN][yN]);
         }
     }
 
     private int countAliveNeighbours(int x, int y) {
         int aliveNeighbours = 0;
-        List<Cell> neighbours = this.universe[x][y].getNeighbours();
+        List<Cell> neighbours = universe[x][y].getNeighbours();
         for (Cell neighbour : neighbours) {
             if (neighbour.isAlive()) {
                 aliveNeighbours++;
@@ -79,11 +79,11 @@ public class SimpleUniverse implements Universe {
 
     private boolean isAliveNextGen(int x, int y) {
         int aliveNeighbours = countAliveNeighbours(x, y);
-        return aliveNeighbours == 3 || (aliveNeighbours == 2 && this.universe[x][y].isAlive());
+        return aliveNeighbours == 3 || (aliveNeighbours == 2 && universe[x][y].isAlive());
     }
 
     private void setNextState(int x, int y) {
-        this.universe[x][y].setAliveNext(isAliveNextGen(x, y));
+        universe[x][y].setAliveNext(isAliveNextGen(x, y));
     }
 
     private void nextGeneration() {
@@ -95,20 +95,20 @@ public class SimpleUniverse implements Universe {
     }
 
     private void updateState(int x, int y) {
-        Cell cell = this.universe[x][y];
+        Cell cell = universe[x][y];
         if (cell.isAlive() != cell.isAliveNext()) {
-            this.cellsChanged.add(new Point(x, y));
+            cellsChanged.add(new Point(x, y));
             if (cell.isAliveNext()) {
-                this.population.setValue(this.population.get() + 1);
+                population.setValue(population.get() + 1);
             } else {
-                this.population.setValue(this.population.get() - 1);
+                population.setValue(population.get() - 1);
             }
         }
         cell.setAlive(cell.isAliveNext());
     }
 
     private void applyNextGeneration() {
-        this.generation.setValue(this.generation.get() + 1);
+        generation.setValue(generation.get() + 1);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 updateState(i, j);
@@ -142,29 +142,25 @@ public class SimpleUniverse implements Universe {
 
     @Override
     public void switchCellState(int x, int y) {
-        Cell cell = this.universe[x][y];
+        Cell cell = universe[x][y];
         cell.switchState();
         if (cell.isAlive()) {
-            this.population.setValue(this.population.get() + 1);
+            population.setValue(population.get() + 1);
         } else {
-            this.population.setValue(this.population.get() - 1);
+            population.setValue(population.get() - 1);
         }
     }
 
     @Override
     public void setCellState(int x, int y, boolean state) {
-        this.universe[x][y].setAlive(state);
+        universe[x][y].setAlive(state);
     }
 
     @Override
-    public void runStep() {
-        this.cellsChanged = new LinkedList<>();
+    public Queue<Point> runStep() {
+        cellsChanged = new LinkedList<>();
         nextGeneration();
         applyNextGeneration();
-    }
-
-    @Override
-    public Queue<Point> getChangedCells() {
         return cellsChanged;
     }
 }

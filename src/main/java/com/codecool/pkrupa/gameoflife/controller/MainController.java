@@ -20,7 +20,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
-
 public class MainController {
 
     public static final String FXML = "/fxml/game_controls.fxml";
@@ -89,7 +88,7 @@ public class MainController {
 
     private void setUpUniverse(Universe universe) {
         this.universe = universe;
-        this.universeDisplay = new UniverseDisplay(universe);
+        this.universeDisplay = new UniverseDisplay(universe.rowsCount(), universe.colsCount());
 
         this.universeContainer.getChildren().clear();
         this.universeContainer.getChildren().add(universeDisplay);
@@ -103,12 +102,7 @@ public class MainController {
     }
 
     private void runStepWithDisplay() {
-        this.universe.runStep();
-        this.universeDisplay.updateDisplay();
-    }
-
-    private void setUpEvents() {
-
+        universeDisplay.updateDisplay(universe.runStep());
     }
 
     @FXML
@@ -167,5 +161,9 @@ public class MainController {
 
     Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public void setAppState(AppState appState) {
+        this.appState = appState;
     }
 }

@@ -18,7 +18,5 @@ public interface Universe {
 
     void setCellState(int x, int y, boolean state);
 
-    void runStep();
-
-    Queue<Point> getChangedCells();
+    Queue<Point> runStep();
 }

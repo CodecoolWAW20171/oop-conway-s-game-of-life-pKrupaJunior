@@ -5,12 +5,18 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
+    private static final String APP_NAME = "Game of Life";
+    private static final String ICON = "/img/glider.png";
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(MainController.FXML));
         Parent root = loader.load();
 
@@ -18,7 +24,8 @@ public class Main extends Application {
         controller.setPrimaryStage(primaryStage);
         controller.setUp();
 
-        primaryStage.setTitle("Game of Life");
+        primaryStage.setTitle(APP_NAME);
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

@@ -89,11 +89,10 @@ public class MainController {
 
     private void setUpUniverse(Universe universe) {
         this.universe = universe;
-        this.universeDisplay = new UniverseDisplay(this.universe);
+        this.universeDisplay = new UniverseDisplay(universe);
 
         this.universeContainer.getChildren().clear();
-        this.universeContainer.getChildren().add(this.universeDisplay);
-        this.universeDisplay.setUpGrid();
+        this.universeContainer.getChildren().add(universeDisplay);
     }
 
     private void setUpLoop() {
@@ -108,6 +107,10 @@ public class MainController {
         this.universeDisplay.updateDisplay();
     }
 
+    private void setUpEvents() {
+
+    }
+
     @FXML
     void handleStartBtn() {
         if (this.appState != AppState.LIFE) {
@@ -119,7 +122,7 @@ public class MainController {
 
     private void startLife() {
         if (this.appState == AppState.SETUP) {
-            this.universeDisplay.endSetUp();
+//            this.universeDisplay.endSetUp();
         }
         this.appState = AppState.LIFE;
         this.timeline.play();

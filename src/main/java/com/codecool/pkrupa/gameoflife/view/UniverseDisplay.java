@@ -26,28 +26,15 @@ public class UniverseDisplay extends GridPane {
         this.rows = universe.rowsCount();
         this.columns = universe.colsCount();
         this.cells = new CellDisplay[rows][columns];
+        setUpGrid();
     }
 
-    public void setUpGrid() {
+    private void setUpGrid() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 CellDisplay cellDisplay = new CellDisplay();
                 cells[i][j] = cellDisplay;
-                int finalI = i;
-                int finalJ = j;
-                cellDisplay.setOnMouseClicked(event -> {
-                    cellDisplay.switchState();
-                    universe.switchCellState(finalI, finalJ);
-                });
                 this.add(cellDisplay, j, i);
-            }
-        }
-    }
-
-    public void endSetUp() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                cells[i][j].setOnMouseClicked(null);
             }
         }
     }
@@ -56,7 +43,7 @@ public class UniverseDisplay extends GridPane {
         Queue<Point> changedCells = this.universe.getChangedCells();
         while (!changedCells.isEmpty()) {
             Point cell = changedCells.poll();
-            this.cells[cell.x][cell.y].switchState();
+            cells[cell.x][cell.y].switchState();
         }
     }
 

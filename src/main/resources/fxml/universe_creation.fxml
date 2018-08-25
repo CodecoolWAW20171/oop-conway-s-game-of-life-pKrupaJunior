@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codecool.pkrupa.gameoflife.controller.UniverseCreationController">
+   <children>
+      <HBox alignment="CENTER_RIGHT" spacing="15.0">
+         <children>
+            <Label text="Rows" />
+            <TextField fx:id="rowsInput" promptText="Number of rows" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="30.0" layoutY="30.0" spacing="15.0">
+         <children>
+            <Label text="Columns" />
+            <TextField fx:id="columnsInput" promptText="Number of columns" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" layoutX="30.0" layoutY="75.0" spacing="15.0">
+         <children>
+            <CheckBox fx:id="wrappingInput" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" selected="true" text="Wrapping" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" layoutX="30.0" layoutY="75.0" spacing="15.0">
+         <children>
+            <Label text="Type" />
+            <ChoiceBox fx:id="universeTypeChoice" prefWidth="150.0" />
+         </children>
+      </HBox>
+      <HBox alignment="BOTTOM_CENTER" spacing="30.0">
+         <children>
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#cancelCreation" text="Cancel" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#createUniverse" text="Create" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

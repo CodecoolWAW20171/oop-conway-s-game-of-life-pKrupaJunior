@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@/css/style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.codecool.pkrupa.gameoflife.controller.MainController">
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+        <items>
+          <Button fx:id="startBtn" defaultButton="true" mnemonicParsing="false" onAction="#handleStartBtn" prefWidth="75.0" text="Start" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Speed" />
+            <Slider fx:id="speedSlider" majorTickUnit="250.0" max="1000.0" min="1.0" nodeOrientation="RIGHT_TO_LEFT" showTickMarks="true" snapToTicks="true" value="1000.0" />
+            <Separator orientation="VERTICAL" />
+            <Button mnemonicParsing="false" onAction="#requestNewUniverse" text="New" />
+            <MenuButton mnemonicParsing="false" text="Load">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Glider gun" />
+                <MenuItem mnemonicParsing="false" text="From file" />
+              </items>
+            </MenuButton>
+            <Button mnemonicParsing="false" onAction="#resetLife" text="Reset" />
+            <Separator layoutX="10.0" layoutY="10.0" orientation="VERTICAL" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#exitApp" text="Quit" />
+        </items>
+      </ToolBar>
+   </top>
+   <left>
+      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Generation: " />
+            <Label fx:id="generation" text="0" />
+            <Label text="Population: " />
+            <Label fx:id="population" text="0" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <Pane fx:id="universeContainer" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

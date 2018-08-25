@@ -13,7 +13,7 @@ public class UniverseDisplay extends GridPane {
     private int rows;
     private int columns;
     private Universe universe;
-    private HashMap<Point, CellDisplay> cells; // TODO: Does it have to be HashMap? Why not simple 2d array
+    private CellDisplay[][] cells;
 
     public UniverseDisplay(Universe universe) {
         super();
@@ -25,14 +25,14 @@ public class UniverseDisplay extends GridPane {
         this.universe = universe;
         this.rows = universe.rowsCount();
         this.columns = universe.colsCount();
-        this.cells = new HashMap<>(rows * columns);
+        this.cells = new CellDisplay[rows][columns];
     }
 
     public void setUpGrid() {
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.columns; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 CellDisplay cellDisplay = new CellDisplay();
-                this.cells.put(new Point(i, j), cellDisplay);
+                cells[i][j] = cellDisplay;
                 int finalI = i;
                 int finalJ = j;
                 cellDisplay.setOnMouseClicked(event -> {
@@ -45,15 +45,18 @@ public class UniverseDisplay extends GridPane {
     }
 
     public void endSetUp() {
-        for (CellDisplay cell : this.cells.values()) {
-            cell.setOnMouseClicked(null);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                cells[i][j].setOnMouseClicked(null);
+            }
         }
     }
 
     public void updateDisplay() {
         Queue<Point> changedCells = this.universe.getChangedCells();
         while (!changedCells.isEmpty()) {
-            this.cells.get(changedCells.poll()).switchState();
+            Point cell = changedCells.poll();
+            this.cells[cell.x][cell.y].switchState();
         }
     }
 

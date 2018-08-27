@@ -1,13 +1,13 @@
 package com.codecool.pkrupa.gameoflife.controller;
 
 import com.codecool.pkrupa.gameoflife.model.Universe;
-import com.codecool.pkrupa.gameoflife.model.simple.SimpleUniverse;
-import com.codecool.pkrupa.gameoflife.view.UniverseDisplay;
+import com.codecool.pkrupa.gameoflife.model.UniverseFactory;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,23 +23,25 @@ import java.io.IOException;
 public class MainController {
 
     public static final String FXML = "/fxml/game_controls.fxml";
-    private static final int DEFAULT_UNIVERSE_WIDTH = 80;
-    private static final int DEFAULT_UNIVERSE_HEIGHT = 50;
-    private static final boolean DEFAULT_WRAPPING = false;
     private static final double INITIAL_SPEED = 1000;
 
     private Stage primaryStage;
-    private Universe universe;
-    private UniverseDisplay universeDisplay;
+
+    private UniverseController universeController;
+
     private Timeline timeline;
-    private DoubleProperty speed;
     private AppState appState;
 
     @FXML
-    private Label generation;
+    private Label generationLabel;
+
+    @FXML
+    private Label populationLabel;
 
     @FXML
     private Slider speedSlider;
+
+    private DoubleProperty speed;
 
     @FXML
     private Pane universeContainer;
@@ -47,67 +49,63 @@ public class MainController {
     @FXML
     private Button startBtn;
 
-    @FXML
-    private Label population;
 
     @FXML
     void initialize() {
-        this.appState = AppState.SETUP;
+        appState = AppState.SETUP;
     }
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    public void setUp() {
-        setUp(new SimpleUniverse(DEFAULT_UNIVERSE_HEIGHT, DEFAULT_UNIVERSE_WIDTH, DEFAULT_WRAPPING));
-    }
-
     public void setUp(Universe universe) {
         this.appState = AppState.SETUP;
-        setUpUniverse(universe);
-        setUpBinds();
+        // Create universe display through controller
+        universeController = new UniverseController(universe);
+        setUpBinds(universe.getGenerationProperty(), universe.getPopulationProperty());
         setUpLoop();
-        this.primaryStage.sizeToScene();
+        addUniverseDisplay();
     }
 
-    private void setUpBinds() {
-        this.generation.textProperty().bind(this.universe.getGenerationProperty().asString());
-        this.population.textProperty().bind(this.universe.getPopulationProperty().asString());
-        this.speed = new SimpleDoubleProperty(INITIAL_SPEED);
-        this.speed.bind(this.speedSlider.valueProperty());
-        this.speedSlider.valueProperty().addListener(observable -> {
+    public void setUp() {
+        setUp(new UniverseFactory().getUniverse());
+    }
+
+    private void setUpBinds(LongProperty generationProperty, LongProperty populationProperty) {
+        // Labels
+        generationLabel.textProperty().bind(generationProperty.asString());
+        populationLabel.textProperty().bind(populationProperty.asString());
+
+        // Speed slider
+        speed = new SimpleDoubleProperty(INITIAL_SPEED);
+        speed.bind(speedSlider.valueProperty());
+        speedSlider.valueProperty().addListener(observable -> {
             pauseLife();
             setUpLoop();
         });
+    }
+
+    private void addUniverseDisplay() {
+        universeContainer.getChildren().clear();
+        universeContainer.getChildren().add(universeController.getDisplay());
+        primaryStage.sizeToScene();
     }
 
     private double getSpeed() {
         return speed.get();
     }
 
-    private void setUpUniverse(Universe universe) {
-        this.universe = universe;
-        this.universeDisplay = new UniverseDisplay(universe.rowsCount(), universe.colsCount());
-
-        this.universeContainer.getChildren().clear();
-        this.universeContainer.getChildren().add(universeDisplay);
-    }
-
     private void setUpLoop() {
         Duration duration = new Duration(getSpeed());
-        KeyFrame keyFrame = new KeyFrame(duration, event -> runStepWithDisplay());
+        KeyFrame keyFrame = new KeyFrame(duration, event -> universeController.runStep());
         this.timeline = new Timeline(keyFrame);
         this.timeline.setCycleCount(Animation.INDEFINITE);
     }
 
-    private void runStepWithDisplay() {
-        universeDisplay.updateDisplay(universe.runStep());
-    }
-
     @FXML
     void handleStartBtn() {
-        if (this.appState != AppState.LIFE) {
+        if (appState != AppState.LIFE) {
             startLife();
         } else {
             pauseLife();
@@ -115,30 +113,32 @@ public class MainController {
     }
 
     private void startLife() {
-        if (this.appState == AppState.SETUP) {
-//            this.universeDisplay.endSetUp();
+        if (appState == AppState.SETUP) {
+            universeController.endSetUp();
         }
-        this.appState = AppState.LIFE;
-        this.timeline.play();
-        this.startBtn.setText("Pause");
+        appState = AppState.LIFE;
+        timeline.play();
+        startBtn.setText("Pause");
     }
 
     private void pauseLife() {
-        this.appState = AppState.PAUSE;
-        this.timeline.stop();
-        this.startBtn.setText("Start");
+        appState = AppState.PAUSE;
+        timeline.stop();
+        startBtn.setText("Start");
     }
 
+    // TODO: Pattern loader
     private void loadPattern(String patternName) {
-        PatternLoader patternLoader = new PatternLoader(universe);
-        patternLoader.getClosestCell(10, 20);
+//        PatternLoader patternLoader = new PatternLoader();
+//        patternLoader.getClosestCell(10, 20);
     }
 
     @FXML
-    void requestNewUniverse() {
+    void showUniverseCreator() {
         pauseLife();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(UniverseCreationController.FXML));
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource(UniverseCreationController.FXML));
             Pane popUpContent = loader.load();
             UniverseCreationController creationController = loader.getController();
             creationController.setMainController(this);
@@ -151,7 +151,7 @@ public class MainController {
     @FXML
     void resetLife() {
         pauseLife();
-        setUp();
+        setUp(universeController.getUniverse());
     }
 
     @FXML
@@ -159,11 +159,5 @@ public class MainController {
         Platform.exit();
     }
 
-    Stage getPrimaryStage() {
-        return primaryStage;
-    }
 
-    public void setAppState(AppState appState) {
-        this.appState = appState;
-    }
 }

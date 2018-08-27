@@ -15,7 +15,7 @@
             <Label text="Speed" />
             <Slider fx:id="speedSlider" majorTickUnit="250.0" max="1000.0" min="1.0" nodeOrientation="RIGHT_TO_LEFT" showTickMarks="true" snapToTicks="true" value="1000.0" />
             <Separator orientation="VERTICAL" />
-            <Button mnemonicParsing="false" onAction="#requestNewUniverse" text="New" />
+            <Button mnemonicParsing="false" onAction="#showUniverseCreator" text="New" />
             <MenuButton mnemonicParsing="false" text="Load">
               <items>
                 <MenuItem mnemonicParsing="false" text="Glider gun" />
@@ -32,9 +32,9 @@
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <Label text="Generation: " />
-            <Label fx:id="generation" text="0" />
+            <Label fx:id="generationLabel" text="0" />
             <Label text="Population: " />
-            <Label fx:id="population" text="0" />
+            <Label fx:id="populationLabel" text="0" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

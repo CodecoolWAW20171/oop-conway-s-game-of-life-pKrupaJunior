@@ -1,15 +1,13 @@
 package com.codecool.pkrupa.gameoflife.controller;
 
-import com.codecool.pkrupa.gameoflife.model.simple.SimpleUniverse;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
+import com.codecool.pkrupa.gameoflife.model.UniverseFactory;
+import com.codecool.pkrupa.gameoflife.model.UniverseType;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -31,37 +29,33 @@ public class UniverseCreationController {
     private CheckBox wrappingInput;
 
     @FXML
-    private ChoiceBox universeTypeChoice;
+    private ChoiceBox<UniverseType> universeTypeChoice;
 
 
     @FXML
     private void initialize() {
-        universeTypeChoice.setItems(FXCollections.observableArrayList(
-                SimpleUniverse.getName()
-        ));
+        universeTypeChoice.getItems().addAll(UniverseType.values());
         universeTypeChoice.getSelectionModel().selectFirst();
     }
 
-    public void show(Stage stageOwner, Pane root) {
-        this.popUp = new Stage(StageStyle.UTILITY);
-        this.popUp.initOwner(stageOwner);
-        this.popUp.initModality(Modality.APPLICATION_MODAL);
-        this.popUp.setTitle("Create new universe");
-        this.popUp.setScene(new Scene(root));
-        this.popUp.showAndWait();
+    void show(Stage stageOwner, Pane root) {
+        popUp = new Stage(StageStyle.UTILITY);
+        popUp.initOwner(stageOwner);
+        popUp.initModality(Modality.APPLICATION_MODAL);
+        popUp.setTitle("Create new universe");
+        popUp.setScene(new Scene(root));
+        popUp.showAndWait();
     }
 
     @FXML
     void createUniverse() {
         try {
-            int rows = Integer.parseInt(this.rowsInput.getText());
-            int columns = Integer.parseInt(this.columnsInput.getText());
+            int rows = Integer.parseInt(rowsInput.getText());
+            int columns = Integer.parseInt(columnsInput.getText());
             boolean wrapping = wrappingInput.isSelected();
-            if (universeTypeChoice.getValue() == SimpleUniverse.getName()) {
-                mainController.setUp(new SimpleUniverse(rows, columns, wrapping));
-                mainController.getPrimaryStage().sizeToScene();
-                this.popUp.close();
-            }
+            UniverseType type = universeTypeChoice.getValue();
+            mainController.setUp(new UniverseFactory().getUniverse(type, rows, columns, wrapping));
+            popUp.close();
         } catch (NumberFormatException e) {
 
         }
@@ -69,7 +63,7 @@ public class UniverseCreationController {
 
     @FXML
     void cancelCreation() {
-        this.popUp.close();
+        popUp.close();
     }
 
     public void setMainController(MainController mainController) {

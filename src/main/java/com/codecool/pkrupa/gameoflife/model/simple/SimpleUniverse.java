@@ -1,6 +1,7 @@
 package com.codecool.pkrupa.gameoflife.model.simple;
 
 import com.codecool.pkrupa.gameoflife.model.Universe;
+import com.codecool.pkrupa.gameoflife.model.UniverseType;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleLongProperty;
 
@@ -121,6 +122,11 @@ public class SimpleUniverse implements Universe {
     }
 
     @Override
+    public UniverseType getType() {
+        return UniverseType.SIMPLE;
+    }
+
+    @Override
     public int rowsCount() {
         return rows;
     }
@@ -128,6 +134,11 @@ public class SimpleUniverse implements Universe {
     @Override
     public int colsCount() {
         return columns;
+    }
+
+    @Override
+    public boolean hasWrapping() {
+        return wrapping;
     }
 
     @Override

@@ -45,4 +45,12 @@ public class UniverseDisplay extends GridPane {
     public CellDisplay[][] getCells() {
         return cells;
     }
+
+    public CellDisplay getCell(int x, int y) {
+        return cells[x][y];
+    }
+
+    public void switchCellState(int x, int y) {
+        cells[x][y].switchState();
+    }
 }

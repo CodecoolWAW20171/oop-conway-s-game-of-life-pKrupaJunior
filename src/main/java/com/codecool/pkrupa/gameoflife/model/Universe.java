@@ -6,9 +6,14 @@ import java.awt.*;
 import java.util.Queue;
 
 public interface Universe {
+
+    UniverseType getType();
+
     int rowsCount();
 
     int colsCount();
+
+    boolean hasWrapping();
 
     LongProperty getGenerationProperty();
 

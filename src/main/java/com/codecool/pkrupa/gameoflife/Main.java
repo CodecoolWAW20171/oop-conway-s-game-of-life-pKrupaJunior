@@ -22,7 +22,7 @@ public class Main extends Application {
 
         MainController controller = loader.getController();
         controller.setPrimaryStage(primaryStage);
-        controller.setUp();
+        controller.init();
 
         primaryStage.setTitle(APP_NAME);
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream(ICON)));

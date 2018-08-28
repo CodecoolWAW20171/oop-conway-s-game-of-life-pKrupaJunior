@@ -1,7 +1,6 @@
 package com.codecool.pkrupa.gameoflife.controller;
 
 import com.codecool.pkrupa.gameoflife.model.Universe;
-import com.codecool.pkrupa.gameoflife.model.UniverseFactory;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -59,17 +58,16 @@ public class MainController {
         this.primaryStage = primaryStage;
     }
 
+    public void init() {
+        universeController = new UniverseController();
+        setUp(universeController.getUniverse());
+    }
+
     public void setUp(Universe universe) {
         this.appState = AppState.SETUP;
-        // Create universe display through controller
-        universeController = new UniverseController(universe);
         setUpBinds(universe.getGenerationProperty(), universe.getPopulationProperty());
         setUpLoop();
         addUniverseDisplay();
-    }
-
-    public void setUp() {
-        setUp(new UniverseFactory().getUniverse());
     }
 
     private void setUpBinds(LongProperty generationProperty, LongProperty populationProperty) {
@@ -141,17 +139,18 @@ public class MainController {
                     new FXMLLoader(getClass().getResource(UniverseCreationController.FXML));
             Pane popUpContent = loader.load();
             UniverseCreationController creationController = loader.getController();
+            creationController.setUniverseController(universeController);
             creationController.setMainController(this);
             creationController.show(primaryStage, popUpContent);
         } catch (IOException e) {
-            setUp();
+            setUp(universeController.createNewUniverse());
         }
     }
 
     @FXML
     void resetLife() {
         pauseLife();
-        setUp(universeController.getUniverse());
+        setUp(universeController.resetUniverse());
     }
 
     @FXML

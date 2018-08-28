@@ -5,38 +5,42 @@ import com.codecool.pkrupa.gameoflife.model.UniverseFactory;
 import com.codecool.pkrupa.gameoflife.model.UniverseType;
 import com.codecool.pkrupa.gameoflife.view.CellDisplay;
 import com.codecool.pkrupa.gameoflife.view.UniverseDisplay;
-import javafx.scene.layout.Pane;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-import java.util.function.Function;
+class UniverseController {
 
-public class UniverseController {
-
-    private final UniverseType type;
-    private final int rows;
-    private final int columns;
-    private final boolean wrapping;
+    private UniverseType type;
+    private int rows;
+    private int columns;
+    private boolean wrapping;
 
     private Universe universe;
     private UniverseDisplay display;
 
-    public UniverseController(Universe universe) {
-        this.rows = universe.rowsCount();
-        this.columns = universe.colsCount();
-        this.wrapping = universe.hasWrapping();
-        this.type = universe.getType();
-        this.universe = universe;
-        this.display = new UniverseDisplay(rows, columns);
-        setUpEvents();
+
+    UniverseController() {
+        createNewUniverse();
     }
 
-    public Universe getUniverse() {
+    private void setUp(UniverseType type, int rows, int columns, boolean wrapping) {
+        this.type = type;
+        this.rows = rows;
+        this.columns = columns;
+        this.wrapping = wrapping;
+        this.display = new UniverseDisplay(rows, columns);
+    }
+
+    Universe createNewUniverse(UniverseType type, int rows, int columns, boolean wrapping) {
+        this.universe = new UniverseFactory().getUniverse(type, rows, columns, wrapping);
+        setUp(type, rows, columns, wrapping);
+        setUpEvents();
         return universe;
     }
 
-    public UniverseDisplay getDisplay() {
-        return display;
+    Universe createNewUniverse() {
+        this.universe = new UniverseFactory().getUniverse();
+        setUp(universe.getType(), universe.rowsCount(), universe.colsCount(), universe.hasWrapping());
+        setUpEvents();
+        return universe;
     }
 
     private void setUpEvents() {
@@ -53,7 +57,7 @@ public class UniverseController {
         }
     }
 
-    public void endSetUp() {
+    void endSetUp() {
         CellDisplay[][] cells = display.getCells();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -62,7 +66,20 @@ public class UniverseController {
         }
     }
 
-    public void runStep() {
+    Universe resetUniverse() {
+        createNewUniverse(type, rows, columns, wrapping);
+        return universe;
+    }
+
+    Universe getUniverse() {
+        return universe;
+    }
+
+    UniverseDisplay getDisplay() {
+        return display;
+    }
+
+    void runStep() {
         display.updateDisplay(universe.runStep());
     }
 

@@ -99,11 +99,8 @@ public class SimpleUniverse implements Universe {
         Cell cell = universe[x][y];
         if (cell.isAlive() != cell.isAliveNext()) {
             cellsChanged.add(new Point(x, y));
-            if (cell.isAliveNext()) {
-                population.setValue(population.get() + 1);
-            } else {
-                population.setValue(population.get() - 1);
-            }
+            int changeVal = cell.isAliveNext() ? 1 : -1;
+            population.setValue(population.get() + changeVal);
         }
         cell.setAlive(cell.isAliveNext());
     }
